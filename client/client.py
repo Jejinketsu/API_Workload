@@ -1,10 +1,19 @@
 import requests
+import time
+import json
 
-""" with open('900214.png', 'rb') as a_file:
-    file_dict = {'file': a_file}
-    response = requests.post('http://127.0.0.1:8000/uploadfile/', files=file_dict) """
+file = open("config_experiment.json")
+test_config = json.load(file)
+file.close()
 
-response = requests.get('http://127.0.0.1:8000/downloadfile/humaru.jpg')
-new_file = open('humaru.jpg', 'wb')
-new_file.write(response.content)
-new_file.close()
+size = 1024*1024*test_config['size_in_MB']
+rate = 1/test_config['arc_per_sec']
+
+for i in range(test_config['n_arc']):
+    file_dict = {'file': bytes(size)}
+    time.sleep(rate)
+
+    print("[client] sending...")
+    response = requests.post('http://127.0.0.1:8000/uploadfile/', files=file_dict)
+    print("[client] sended")
+    print(response.text)
