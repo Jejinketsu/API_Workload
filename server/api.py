@@ -1,18 +1,20 @@
 from typing import Optional
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import FileResponse
+from database.connectionToMySQL import DataBaseMySql
 
 app = FastAPI()
-
-@app.get("/downloadfile/{filename}")
-async def download_file(filename: str):
-    return FileResponse(filename)
+db = DataBaseMySql()
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
     print({"filename": file.filename})
-    new_file = open(file.filename, 'wb')
     contents = await file.read()
-    new_file.write(contents)
-    new_file.close()
+    try:
+        db.connect()
+        db.insert(contents)
+        db.disconnect()
+    except:
+        raise HTTPException(status_code=500)
+        
     return {"filename": file.filename}
