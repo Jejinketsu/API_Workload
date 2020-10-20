@@ -14,6 +14,6 @@ for i in range(test_config['n_arc']):
     time.sleep(rate)
 
     print("[client] sending...")
-    response = requests.post('http://127.0.0.1:8000/uploadfile/', files=file_dict)
+    response = requests.post('http://127.0.0.1:8000/uploadfile_mysql/', files=file_dict)
     print("[client] sended")
     print(response.text)
